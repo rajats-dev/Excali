@@ -1,0 +1,26 @@
+{
+  "name": "ws",
+  "module": "src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "bun run ./src/index.ts",
+    "dev": "bun run ./src/index.ts"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.3",
+    "ws": "^8.19.0"
+  },
+  "devDependencies": {
+    "@types/ws": "^8.18.1",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/bun": "latest",
+    "@repo/typescript-config": "*",
+    "@repo/server-common": "*",
+    "@repo/common": "*",
+    "@repo/db": "*"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}

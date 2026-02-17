@@ -60,4 +60,6 @@ app.get("/", (req, res) => {
   res.send("Server is Running");
 });
 
-app.listen(3001);
+app.listen(3001, () => {
+  console.log("Server is running at 3001");
+});
