@@ -139,9 +139,6 @@ importers:
         specifier: ^8.18.0
         version: 8.18.0
     devDependencies:
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../typescript-config
       '@types/pg':
         specifier: ^8.16.0
         version: 8.16.0

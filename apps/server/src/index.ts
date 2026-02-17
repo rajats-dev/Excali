@@ -7,17 +7,30 @@ import {
   SigninSchema,
   CreateRoomSchema,
 } from "@repo/common/types";
+import { prisma } from "@repo/db";
 
 const app = express();
+app.use(express.json());
 
-app.post("./signup", (req, res) => {
-  const data = CreateUserSchema.safeParse(req.body);
+app.post("./signup", async (req, res) => {
+  const parseddata = CreateUserSchema.safeParse(req.body);
 
-  if (!data.success) {
+  if (!parseddata.success) {
     res.json({ message: "Incorrect Input" });
     return;
   }
-  res.json({ userId: "123" });
+  try {
+    await prisma.user.create({
+      data: {
+        email: parseddata.data?.username,
+        password: parseddata.data?.password,
+        name: parseddata.data?.name,
+      },
+    });
+    res.status(201).json({ userId: "123" });
+  } catch (error) {
+    res.status(411).json({ message: "User alraady exist with this username" });
+  }
 });
 
 app.post("/signin", (req, res) => {
@@ -41,6 +54,10 @@ app.post("./room", middleware, (req, res) => {
     return;
   }
   res.json({ roomId: 1233 });
+});
+
+app.get("/", (req, res) => {
+  res.send("Server is Running");
 });
 
 app.listen(3001);
