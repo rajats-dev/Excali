@@ -53,7 +53,7 @@ wss.on("connection", function connections(ws, req) {
     if (parsed_Data.type === "leave_room") {
       const user = users.find((x) => x.ws === ws);
       if (!user) return;
-      user.rooms = user?.rooms.filter((x) => x !== parsed_Data.roomId);
+      user.rooms = user?.rooms.filter((x) => x === parsed_Data.roomId);
     }
 
     if (parsed_Data.type === "chat") {
