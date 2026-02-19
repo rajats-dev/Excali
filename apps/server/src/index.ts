@@ -21,7 +21,6 @@ app.post("/signup", async (req, res) => {
   }
 
   try {
-    console.log(parseddata);
     const user = await prisma.user.create({
       data: {
         email: parseddata.data?.username,
@@ -29,7 +28,6 @@ app.post("/signup", async (req, res) => {
         name: parseddata.data.name,
       },
     });
-    console.log(user);
     res.status(201).json({ userId: user?.id });
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
@@ -56,6 +54,7 @@ app.post("/signin", async (req, res) => {
     res.json({ message: "Incorrect Input" });
     return;
   }
+
   const user = await prisma.user.findFirst({
     where: {
       email: parseddata.data?.username,
@@ -77,20 +76,24 @@ app.post("/room", middleware, async (req, res) => {
   const parseddata = CreateRoomSchema.safeParse(req.body);
 
   if (!parseddata.success) {
-    res.json({ message: "Incorrect Input" });
+    res.json({ message: "Incorrect Input for room creation!" });
     return;
   }
   //@ts-ignore
   const userId = req.userId;
   try {
-    const room = await prisma.room.create({
-      data: {
-        slug: parseddata.data?.name,
-        adminId: userId,
-      },
-    });
+    try {
+      const room = await prisma.room.create({
+        data: {
+          slug: parseddata.data?.name,
+          adminId: userId,
+        },
+      });
 
-    res.json({ roomId: room.id });
+      res.json({ roomId: room.id });
+    } catch (error) {
+      res.status(409).json({ message: "Room already exists with this name" });
+    }
   } catch (error) {
     if (error instanceof PrismaClientKnownRequestError) {
       console.error("Prisma error code:", error.code);
@@ -105,6 +108,29 @@ app.post("/room", middleware, async (req, res) => {
     console.error("Signup error:", error);
     res.status(500).json({ message: "Internal server error" });
   }
+});
+
+app.get("/chats/:roomId", async (req, res) => {
+  try {
+    const roomId = Number(req.params.roomId);
+    const messages = await prisma.chat.findMany({
+      where: { roomId: roomId },
+      orderBy: { id: "desc" },
+      take: 1000,
+    });
+
+    res.json({ messages });
+  } catch (e) {
+    res.json({ messages: [] });
+  }
+});
+
+app.get("/room/:slug", async (req, res) => {
+  const slug = req.params.slug;
+  const room = await prisma.room.findFirst({
+    where: { slug },
+  });
+  res.json({ room });
 });
 
 app.get("/", (req, res) => {
