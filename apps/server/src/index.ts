@@ -9,9 +9,11 @@ import {
 } from "@repo/common/types";
 import { prisma } from "@repo/db";
 import { PrismaClientKnownRequestError } from "../../../packages/db/generated/prisma/internal/prismaNamespace";
+import cors from "cors";
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.post("/signup", async (req, res) => {
   const parseddata = CreateUserSchema.safeParse(req.body);
