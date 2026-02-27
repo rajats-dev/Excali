@@ -15,6 +15,7 @@
       "dependsOn": ["^check-types"]
     },
     "dev": {
+      "env": ["DATABASE_URL"],
       "dependsOn": ["^db:generate"],
       "cache": false,
       "persistent": true
@@ -24,7 +25,7 @@
     },
     "db:migrate": {
       "cache": false,
-      "persistent": true // This is necessary to interact with the CLI and assign names to your database migrations.
+      "persistent": true
     },
     "db:deploy": {
       "cache": false
